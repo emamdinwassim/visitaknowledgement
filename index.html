@@ -1,729 +1,492 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Super Deals Mauritius Co Ltd - Hotel Management</title>
-<style>
-  /* --- General Reset & Fonts --- */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0;
-    background: #f5f7fa;
-    color: #333;
-    transition: background-color 0.4s ease, color 0.4s ease;
-  }
-  header {
-    background-color: #004080;
-    color: white;
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header h1 {
-    margin: 0; font-size: 1.6rem;
-  }
-  nav {
-    display: flex;
-    gap: 1rem;
-  }
-  .tab-btn {
-    background: transparent;
-    border: none;
-    color: white;
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: border-color 0.3s ease;
-  }
-  .tab-btn:hover, .tab-btn.active {
-    border-bottom: 3px solid #ffcc00;
-  }
-  main {
-    padding: 1rem 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  h2 {
-    margin-top: 0;
-  }
-  .panel {
-    display: none;
-  }
-  .panel.active {
-    display: block;
-  }
-  /* --- Dashboard cards --- */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-    gap: 1rem;
-  }
-  .card {
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-    text-align: center;
-  }
-  .card h3 {
-    margin: 0 0 0.3rem;
-    font-size: 1.1rem;
-    color: #004080;
-  }
-  .card .value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #222;
-  }
-
-  /* --- Tables --- */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  th, td {
-    padding: 0.5rem 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  th {
-    background: #f0f4ff;
-  }
-  tr:hover {
-    background: #f9fbff;
-  }
-  button {
-    padding: 0.25rem 0.5rem;
-    background: #004080;
-    border: none;
-    color: white;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #00264d;
-  }
-  /* --- Forms --- */
-  form {
-    margin-top: 1rem;
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
-  }
-  label {
-    display: block;
-    margin: 0.6rem 0 0.3rem;
-    font-weight: 600;
-  }
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="date"],
-  input[type="number"],
-  select,
-  textarea {
-    width: 100%;
-    padding: 0.4rem 0.6rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-  }
-  textarea {
-    resize: vertical;
-  }
-  /* --- Scrollable tables --- */
-  .scrollable {
-    max-height: 320px;
-    overflow-y: auto;
-    margin-top: 1rem;
-  }
-
-  /* Status badge colors */
-  .status {
-    padding: 0.15rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: capitalize;
-  }
-  .status-available { background: #d1e7dd; color: #0f5132; }
-  .status-occupied { background: #f8d7da; color: #842029; }
-  .status-maintenance { background: #fff3cd; color: #664d03; }
-  .status-confirmed { background: #cfe2ff; color: #084298; }
-  .status-cancelled { background: #f8d7da; color: #842029; }
-  .status-active { background: #d1e7dd; color: #0f5132; }
-  .status-off-duty { background: #e2e3e5; color: #41464b; }
-  .status-on-leave { background: #fff3cd; color: #664d03; }
-  .status-pending { background: #ffe5b4; color: #a65e00; }
-  .status-completed { background: #c7f0db; color: #1a7f37; }
-
-  /* --- Task management styles --- */
-  #tasks .task-list {
-    margin-top: 1rem;
-  }
-  #tasks .task-item {
-    background: white;
-    padding: 0.7rem 1rem;
-    border-radius: 6px;
-    margin-bottom: 0.8rem;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  #tasks .task-item span {
-    font-weight: 600;
-  }
-  #tasks .task-item .due-date {
-    font-style: italic;
-    font-size: 0.9rem;
-    color: #666;
-  }
-  #tasks .task-actions button {
-    margin-left: 0.5rem;
-  }
-
-  /* Dark mode styles */
-  body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-  }
-  body.dark-mode header {
-    background-color: #001f3f;
-  }
-  body.dark-mode table th {
-    background-color: #222;
-  }
-  body.dark-mode table tr:hover {
-    background-color: #333;
-  }
-  body.dark-mode table, 
-  body.dark-mode th, 
-  body.dark-mode td {
-    border-color: #444;
-  }
-  body.dark-mode input, 
-  body.dark-mode select, 
-  body.dark-mode textarea {
-    background-color: #222;
-    color: #eee;
-    border: 1px solid #555;
-  }
-  body.dark-mode button {
-    background-color: #0066cc;
-    color: white;
-  }
-  body.dark-mode button:hover {
-    background-color: #004080;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Emamdin Wassim Realty | Property Visit Acknowledgement</title>
+    <!-- Tailwind + Fonts + Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(212,175,55,0.35);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12);
+        }
+        .gold-border { border-color: #D4AF37; }
+        .bg-deep { background: #0A1A2F; }
+        .signature-canvas {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            touch-action: none;
+            width: 100%;
+            height: 150px;
+            cursor: crosshair;
+        }
+        input, select, textarea { transition: all 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: #D4AF37; outline: none; box-shadow: 0 0 0 2px rgba(212,175,55,0.2); }
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 50;
+            background: #25D366;
+            border-radius: 60px;
+            padding: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .whatsapp-float:hover { transform: scale(1.05); }
+        body { background: #F4F7FC; }
+        .premium-checkbox:checked { background-color: #D4AF37; border-color: #D4AF37; }
+    </style>
 </head>
-<body>
-<header>
-  <h1>Super Deals Mauritius Co Ltd</h1>
-  <nav>
-    <button class="tab-btn active" data-target="dashboard">Dashboard</button>
-    <button class="tab-btn" data-target="bookings">Bookings</button>
-    <button class="tab-btn" data-target="rooms">Rooms</button>
-    <button class="tab-btn" data-target="staff">Staff</button>
-    <button class="tab-btn" data-target="tasks">Tasks</button>
-    <!-- Other tabs will come later -->
-  </nav>
-  <button id="darkModeToggle" title="Toggle Dark Mode" style="margin-left: 1rem; padding: 0.3rem 0.5rem;">🌙</button>
-</header>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100">
+    <div id="root"></div>
 
-<main>
-  <section id="dashboard" class="panel active">
-    <h2>Dashboard</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Total Bookings</h3>
-        <div class="value" id="dash-total-bookings">0</div>
-      </div>
-      <div class="card">
-        <h3>Rooms Available</h3>
-        <div class="value" id="dash-rooms-available">0</div>
-      </div>
-      <div class="card">
-        <h3>Staff On Duty</h3>
-        <div class="value" id="dash-staff-on-duty">0</div>
-      </div>
-      <div class="card">
-        <h3>Pending Tasks</h3>
-        <div class="value" id="dash-pending-tasks">0</div>
-      </div>
-    </div>
-  </section>
+    <script type="text/babel">
+        // Helper functions
+        const getTodayDate = () => new Date().toISOString().split('T')[0];
+        const getCurrentTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' });
 
-  <section id="bookings" class="panel">
-    <h2>Manage Bookings</h2>
-    <form id="bookingForm">
-      <label for="guestName">Guest Name</label>
-      <input type="text" id="guestName" name="guestName" required />
+        // Signature Pad Hook (works on mouse + touch)
+        const useSignaturePad = (initialText = null) => {
+            const canvasRef = React.useRef(null);
+            const [signatureData, setSignatureData] = React.useState(null);
+            const drawingRef = React.useRef(false);
 
-      <label for="guestEmail">Guest Email</label>
-      <input type="email" id="guestEmail" name="guestEmail" required />
+            const initCanvas = () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                if (initialText) {
+                    ctx.font = `22px "Brush Script MT", cursive`;
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillText(initialText, 20, canvas.height/2 + 8);
+                    setSignatureData(canvas.toDataURL());
+                } else {
+                    setSignatureData(null);
+                }
+            };
 
-      <label for="guestPhone">Guest Phone</label>
-      <input type="tel" id="guestPhone" name="guestPhone" required />
+            React.useEffect(() => {
+                initCanvas();
+                window.addEventListener('resize', initCanvas);
+                return () => window.removeEventListener('resize', initCanvas);
+            }, []);
 
-      <label for="roomSelect">Room</label>
-      <select id="roomSelect" name="roomSelect" required></select>
+            const getCoords = (e) => {
+                const canvas = canvasRef.current;
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                let clientX, clientY;
+                if (e.touches) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY
+                };
+            };
 
-      <label for="checkInDate">Check-in Date</label>
-      <input type="date" id="checkInDate" name="checkInDate" required />
+            const startDrawing = (e) => {
+                drawingRef.current = true;
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const { x, y } = getCoords(e);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                e.preventDefault();
+            };
 
-      <label for="checkOutDate">Check-out Date</label>
-      <input type="date" id="checkOutDate" name="checkOutDate" required />
+            const draw = (e) => {
+                if (!drawingRef.current) return;
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const { x, y } = getCoords(e);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                e.preventDefault();
+            };
 
-      <button type="submit">Add Booking</button>
-    </form>
-    <div class="scrollable">
-      <table id="bookingsTable">
-        <thead>
-          <tr>
-            <th>Guest Name</th>
-            <th>Room</th>
-            <th>Check-in</th>
-            <th>Check-out</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Bookings rows here -->
-        </tbody>
-      </table>
-    </div>
-  </section>
+            const endDrawing = () => {
+                drawingRef.current = false;
+                if (canvasRef.current) {
+                    setSignatureData(canvasRef.current.toDataURL());
+                }
+            };
 
-  <section id="rooms" class="panel">
-    <h2>Manage Rooms</h2>
-    <form id="roomForm">
-      <label for="roomNumber">Room Number</label>
-      <input type="text" id="roomNumber" name="roomNumber" required />
+            const clearSignature = () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#000';
+                if (initialText) {
+                    ctx.font = `22px "Brush Script MT", cursive`;
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillText(initialText, 20, canvas.height/2 + 8);
+                }
+                setSignatureData(canvas.toDataURL());
+            };
 
-      <label for="roomType">Room Type</label>
-      <select id="roomType" name="roomType" required>
-        <option value="">Select Type</option>
-        <option value="Single">Single</option>
-        <option value="Double">Double</option>
-        <option value="Suite">Suite</option>
-      </select>
+            return { canvasRef, signatureData, clearSignature, startDrawing, draw, endDrawing };
+        };
 
-      <label for="roomStatus">Status</label>
-      <select id="roomStatus" name="roomStatus" required>
-        <option value="available">Available</option>
-        <option value="occupied">Occupied</option>
-        <option value="maintenance">Maintenance</option>
-      </select>
+        // Main App Component
+        const App = () => {
+            // Form fields (flexible — only basic fields required for WhatsApp)
+            const [formData, setFormData] = React.useState({
+                fullName: '', nationalId: '', mobile: '', whatsapp: '', email: '', address: '', nationality: '', occupation: '',
+                propertyRef: '', propertyType: 'Apartment', propertyLocation: '', sellerOwner: '',
+                visitDate: getTodayDate(), visitTime: getCurrentTime(), viewingConductedBy: 'Emamdin Wassim'
+            });
+            const [declarations, setDeclarations] = React.useState({
+                exclusive: false, introduced: false, noDirect: false, circumvention: false, introducingAgent: false, accuracy: false
+            });
+            const [selfiePhoto, setSelfiePhoto] = React.useState(null);
+            const [idPhoto, setIdPhoto] = React.useState(null);
+            const [gpsData, setGpsData] = React.useState({ lat: null, lng: null, timestamp: null, deviceInfo: '' });
+            const [geoStatus, setGeoStatus] = React.useState('📍 Fetching location...');
+            const [loading, setLoading] = React.useState(false);
+            const [submitted, setSubmitted] = React.useState(false);
+            const [lastSubmission, setLastSubmission] = React.useState(null);
+            const [adminOpen, setAdminOpen] = React.useState(false);
+            const [submissions, setSubmissions] = React.useState([]);
+            const [searchTerm, setSearchTerm] = React.useState('');
+            const [searchRef, setSearchRef] = React.useState('');
 
-      <button type="submit">Add Room</button>
-    </form>
-    <div class="scrollable">
-      <table id="roomsTable">
-        <thead>
-          <tr>
-            <th>Room Number</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Rooms rows here -->
-        </tbody>
-      </table>
-    </div>
-  </section>
+            const clientSignature = useSignaturePad(null);
+            const agentSignature = useSignaturePad('Emamdin Wassim');
 
-  <section id="staff" class="panel">
-    <h2>Manage Staff</h2>
-    <form id="staffForm">
-      <label for="staffName">Name</label>
-      <input type="text" id="staffName" name="staffName" required />
+            // Load previous submissions from localStorage
+            React.useEffect(() => {
+                const stored = localStorage.getItem('ewr_visits');
+                if (stored) setSubmissions(JSON.parse(stored));
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            setGpsData({
+                                lat: pos.coords.latitude,
+                                lng: pos.coords.longitude,
+                                timestamp: new Date().toISOString(),
+                                deviceInfo: navigator.userAgent
+                            });
+                            setGeoStatus('✅ Verified');
+                        },
+                        () => { setGeoStatus('⚠️ Access denied (optional)'); }
+                    );
+                } else {
+                    setGeoStatus('Not supported');
+                }
+            }, []);
 
-      <label for="staffRole">Role</label>
-      <input type="text" id="staffRole" name="staffRole" required />
+            const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+            const toggleDecl = (key) => setDeclarations({ ...declarations, [key]: !declarations[key] });
 
-      <label for="staffStatus">Status</label>
-      <select id="staffStatus" name="staffStatus" required>
-        <option value="active">Active</option>
-        <option value="off-duty">Off Duty</option>
-        <option value="on-leave">On Leave</option>
-      </select>
+            // Only minimal required: name + property ref (for WhatsApp) but we also need signature and at least one declaration?
+            // But user wants: "if somewhere not put no problem" -> we make only client signature mandatory and at least name for message.
+            const canSubmit = () => {
+                const nameExists = formData.fullName.trim() !== '';
+                const signatureExists = !!clientSignature.signatureData;
+                return nameExists && signatureExists;
+            };
 
-      <button type="submit">Add Staff</button>
-    </form>
-    <div class="scrollable">
-      <table id="staffTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Staff rows here -->
-        </tbody>
-      </table>
-    </div>
-  </section>
+            const generatePDF = async (record) => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const margin = 15;
+                let y = 25;
+                pdf.setFillColor(10, 26, 47);
+                pdf.rect(0, 0, 210, 30, 'F');
+                pdf.setTextColor(255, 215, 0);
+                pdf.setFontSize(18);
+                pdf.text("Emamdin Wassim Realty", margin, 18);
+                pdf.setTextColor(255,255,255);
+                pdf.setFontSize(10);
+                pdf.text("Super Deals Mauritius Co Ltd", margin, 26);
+                pdf.setTextColor(0,0,0);
+                pdf.setFontSize(14);
+                pdf.text("Official Property Viewing Acknowledgement", margin, 45);
+                pdf.setDrawColor(212,175,55);
+                pdf.line(margin, 50, 195, 50);
+                y = 60;
+                const addLine = (label, value, yPos) => {
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(80,80,80);
+                    pdf.text(label + ":", margin, yPos);
+                    pdf.setTextColor(0,0,0);
+                    pdf.text(value || "—", margin + 45, yPos);
+                    return yPos + 7;
+                };
+                y = addLine("Full Name", record.fullName, y);
+                y = addLine("ID/Passport", record.nationalId, y);
+                y = addLine("Mobile", record.mobile, y);
+                y = addLine("Email", record.email, y);
+                y = addLine("Property Ref", record.propertyRef, y);
+                y = addLine("Location", record.propertyLocation, y);
+                y = addLine("Visit Date", record.visitDate, y);
+                y += 4;
+                pdf.text("Legal declarations accepted", margin, y);
+                y += 6;
+                if (record.clientSignature) {
+                    pdf.addImage(record.clientSignature, 'PNG', margin, y, 50, 20);
+                    pdf.text("Client Signature", margin, y+23);
+                }
+                if (record.agentSignature) {
+                    pdf.addImage(record.agentSignature, 'PNG', margin+70, y, 50, 20);
+                    pdf.text("Agent Signature", margin+70, y+23);
+                }
+                y += 35;
+                if (record.gpsCoords) {
+                    pdf.setFontSize(9);
+                    pdf.text(`GPS: ${record.gpsCoords}`, margin, y);
+                    y += 5;
+                }
+                if (record.selfiePhoto) {
+                    y += 8;
+                    pdf.text("Selfie:", margin, y);
+                    try { pdf.addImage(record.selfiePhoto, 'JPEG', margin, y+3, 40, 30); } catch(e){}
+                }
+                if (record.idPhoto) {
+                    y += 40;
+                    pdf.text("ID Copy:", margin, y);
+                    try { pdf.addImage(record.idPhoto, 'JPEG', margin, y+3, 40, 30); } catch(e){}
+                }
+                pdf.save(`Visit_${record.fullName.replace(/\s/g,'_')}.pdf`);
+            };
 
-  <section id="tasks" class="panel">
-    <h2>Task Management</h2>
-    <form id="taskForm">
-      <label for="taskTitle">Task Title</label>
-      <input type="text" id="taskTitle" name="taskTitle" required />
+            const handleSubmit = async () => {
+                if (!canSubmit()) {
+                    alert("Please provide client name and signature at minimum.");
+                    return;
+                }
+                setLoading(true);
+                const submissionId = Date.now().toString();
+                const submissionRecord = {
+                    id: submissionId,
+                    ...formData,
+                    declarations: { ...declarations },
+                    clientSignature: clientSignature.signatureData,
+                    agentSignature: agentSignature.signatureData,
+                    selfiePhoto: selfiePhoto || null,
+                    idPhoto: idPhoto || null,
+                    gpsCoords: gpsData.lat ? `${gpsData.lat}, ${gpsData.lng}` : 'Not captured',
+                    gpsTimestamp: gpsData.timestamp || new Date().toISOString(),
+                    deviceInfo: gpsData.deviceInfo,
+                    submittedAt: new Date().toISOString()
+                };
+                const updated = [submissionRecord, ...submissions];
+                setSubmissions(updated);
+                localStorage.setItem('ewr_visits', JSON.stringify(updated));
+                setLastSubmission(submissionRecord);
+                
+                // Generate PDF
+                await generatePDF(submissionRecord);
+                
+                // WhatsApp Message (always sent to +23059237053)
+                const clientName = formData.fullName || "Client";
+                const propRef = formData.propertyRef || "N/A";
+                const location = formData.propertyLocation || "Mauritius";
+                const date = formData.visitDate || getTodayDate();
+                const time = formData.visitTime || getCurrentTime();
+                const waText = `New Client Viewing Registered:%0AClient: ${clientName}%0AProperty Ref: ${propRef}%0ALocation: ${location}%0ADate: ${date}%0ATime: ${time}`;
+                window.open(`https://wa.me/23059237053?text=${waText}`, '_blank');
+                
+                setSubmitted(true);
+                setLoading(false);
+            };
 
-      <label for="taskAssignedTo">Assign To (Staff Name)</label>
-      <select id="taskAssignedTo" name="taskAssignedTo" required></select>
+            const resetForm = () => {
+                setFormData({
+                    fullName: '', nationalId: '', mobile: '', whatsapp: '', email: '', address: '', nationality: '', occupation: '',
+                    propertyRef: '', propertyType: 'Apartment', propertyLocation: '', sellerOwner: '',
+                    visitDate: getTodayDate(), visitTime: getCurrentTime(), viewingConductedBy: 'Emamdin Wassim'
+                });
+                setDeclarations({ exclusive: false, introduced: false, noDirect: false, circumvention: false, introducingAgent: false, accuracy: false });
+                clientSignature.clearSignature();
+                setSelfiePhoto(null);
+                setIdPhoto(null);
+                setSubmitted(false);
+                agentSignature.clearSignature(); // will redraw text
+            };
 
-      <label for="taskDueDate">Due Date</label>
-      <input type="date" id="taskDueDate" name="taskDueDate" required />
+            const filteredSubmissions = submissions.filter(s =>
+                (s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === '') &&
+                (s.propertyRef.toLowerCase().includes(searchRef.toLowerCase()) || searchRef === '')
+            );
 
-      <label for="taskStatus">Status</label>
-      <select id="taskStatus" name="taskStatus" required>
-        <option value="pending">Pending</option>
-        <option value="in-progress">In Progress</option>
-        <option value="completed">Completed</option>
-      </select>
+            if (loading) {
+                return (
+                    <div className="fixed inset-0 bg-deep flex items-center justify-center flex-col z-50">
+                        <div className="animate-spin rounded-full h-16 w-16 border-4 border-gold border-t-transparent"></div>
+                        <p className="text-white mt-4">Processing luxury acknowledgement...</p>
+                    </div>
+                );
+            }
 
-      <button type="submit">Add Task</button>
-    </form>
-    <div class="task-list" id="taskList">
-      <!-- Task items here -->
-    </div>
-  </section>
-</main>
+            if (submitted && lastSubmission) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-5">
+                        <div className="glass-card rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+                            <div className="w-20 h-20 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto text-4xl mb-4">✓</div>
+                            <h2 className="text-2xl font-bold text-deep">Thank You</h2>
+                            <p className="text-gray-600 mt-2">Property viewing acknowledgement recorded with Emamdin Wassim Realty. WhatsApp notification sent.</p>
+                            <div className="flex flex-col gap-3 mt-6">
+                                <button onClick={() => generatePDF(lastSubmission)} className="bg-deep text-white py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="download"></i> Download PDF</button>
+                                <button onClick={() => { const text = `Acknowledgement for ${lastSubmission.fullName} (Ref ${lastSubmission.propertyRef})`; window.open(`https://wa.me/23059237053?text=${encodeURIComponent(text)}`); }} className="bg-green-600 text-white py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="send"></i> Send WhatsApp Copy</button>
+                                <button onClick={resetForm} className="border border-gold text-gold py-3 rounded-xl flex items-center justify-center gap-2"><i data-lucide="plus-circle"></i> Register New Client</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
 
-<script>
-  // Data stores
-  let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-  let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
-  let staff = JSON.parse(localStorage.getItem('staff')) || [];
-  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            return (
+                <div className="max-w-2xl mx-auto px-4 py-6 pb-24 relative">
+                    <a href="https://wa.me/23059237053" target="_blank" className="whatsapp-float"><i data-lucide="message-circle" className="text-white w-7 h-7"></i></a>
+                    
+                    <div className="flex justify-between items-center mb-3">
+                        <div>
+                            <h1 className="text-2xl font-bold text-deep">Emamdin Wassim Realty</h1>
+                            <p className="text-xs text-gray-500">Super Deals Mauritius Co Ltd</p>
+                            <p className="text-sm text-gold font-medium">Client Property Viewing Registration & Acknowledgement</p>
+                        </div>
+                        <button onClick={() => setAdminOpen(true)} className="bg-white shadow-md rounded-full p-2 border border-gold"><i data-lucide="layout-dashboard"></i></button>
+                    </div>
 
-  // Tab navigation logic
-  const tabs = document.querySelectorAll('.tab-btn');
-  const panels = document.querySelectorAll('.panel');
+                    <div className="glass-card rounded-2xl p-5 space-y-6 shadow-lg">
+                        {/* Section 1: Client Details */}
+                        <div>
+                            <h2 className="text-lg font-semibold border-l-4 border-gold pl-3">Client Identity (min. name required)</h2>
+                            <div className="grid gap-3 mt-3">
+                                <input name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name *" className="w-full p-3 rounded-xl border"/>
+                                <input name="nationalId" value={formData.nationalId} onChange={handleChange} placeholder="National ID / Passport (optional)" className="w-full p-3 rounded-xl border"/>
+                                <input name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Mobile Number" className="w-full p-3 rounded-xl border"/>
+                                <input name="whatsapp" value={formData.whatsapp} onChange={handleChange} placeholder="WhatsApp Number" className="w-full p-3 rounded-xl border"/>
+                                <input name="email" value={formData.email} onChange={handleChange} placeholder="Email Address" className="w-full p-3 rounded-xl border"/>
+                                <textarea name="address" value={formData.address} onChange={handleChange} placeholder="Residential Address (optional)" rows="2" className="w-full p-3 rounded-xl border"></textarea>
+                                <input name="nationality" value={formData.nationality} onChange={handleChange} placeholder="Nationality" className="w-full p-3 rounded-xl border"/>
+                                <input name="occupation" value={formData.occupation} onChange={handleChange} placeholder="Occupation" className="w-full p-3 rounded-xl border"/>
+                            </div>
+                        </div>
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      panels.forEach(p => p.classList.remove('active'));
+                        {/* Section 2: Property Visit Details */}
+                        <div>
+                            <h2 className="text-lg font-semibold border-l-4 border-gold pl-3">Property Visit Details</h2>
+                            <div className="grid gap-3 mt-3">
+                                <input name="visitDate" type="date" value={formData.visitDate} onChange={handleChange} className="w-full p-3 rounded-xl border"/>
+                                <input name="visitTime" type="time" value={formData.visitTime} onChange={handleChange} className="w-full p-3 rounded-xl border"/>
+                                <input name="propertyRef" value={formData.propertyRef} onChange={handleChange} placeholder="Property Reference Number" className="w-full p-3 rounded-xl border"/>
+                                <select name="propertyType" value={formData.propertyType} onChange={handleChange} className="w-full p-3 rounded-xl border">
+                                    <option>Apartment</option><option>Villa</option><option>House</option><option>Commercial</option><option>Land</option><option>Penthouse</option><option>Office</option>
+                                </select>
+                                <input name="propertyLocation" value={formData.propertyLocation} onChange={handleChange} placeholder="Property Location / Region (Mauritius)" className="w-full p-3 rounded-xl border"/>
+                                <input name="sellerOwner" value={formData.sellerOwner} onChange={handleChange} placeholder="Seller / Owner Name" className="w-full p-3 rounded-xl border"/>
+                                <input disabled value={formData.viewingConductedBy} className="w-full p-3 rounded-xl border bg-gray-50"/>
+                            </div>
+                        </div>
 
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.target).classList.add('active');
+                        {/* Section 3: Legal Declaration (premium checkboxes - optional but recommended) */}
+                        <div>
+                            <h2 className="text-lg font-semibold border-l-4 border-gold pl-3">Legal Declaration (optional but recommended)</h2>
+                            <div className="space-y-2 mt-2 text-sm">
+                                <label className="flex items-start gap-2"><input type="checkbox" checked={declarations.exclusive} onChange={()=>toggleDecl('exclusive')} className="mt-1 premium-checkbox"/><span>Exclusive arrangement with Emamdin Wassim Realty</span></label>
+                                <label className="flex items-start gap-2"><input type="checkbox" checked={declarations.introduced} onChange={()=>toggleDecl('introduced')} className="mt-1 premium-checkbox"/><span>Information introduced solely by agency</span></label>
+                                <label className="flex items-start gap-2"><input type="checkbox" checked={declarations.noDirect} onChange={()=>toggleDecl('noDirect')} className="mt-1 premium-checkbox"/><span>No direct negotiation with owner/seller</span></label>
+                                <label className="flex items-start gap-2"><input type="checkbox" checked={declarations.circumvention} onChange={()=>toggleDecl('circumvention')} className="mt-1 premium-checkbox"/><span>Circumvention constitutes breach</span></label>
+                                <label className="flex items-start gap-2"><input type="checkbox" checked={declarations.introducingAgent} onChange={()=>toggleDecl('introducingAgent')} className="mt-1 premium-checkbox"/><span>Agency remains introducing agent</span></label>
+                                <label className="flex items-start gap-2"><input type="checkbox" checked={declarations.accuracy} onChange={()=>toggleDecl('accuracy')} className="mt-1 premium-checkbox"/><span>Information certified true</span></label>
+                            </div>
+                        </div>
 
-      // Special updates if needed
-      if(tab.dataset.target === 'tasks') updateTaskAssignedToSelect();
-      if(tab.dataset.target === 'bookings') updateRoomSelect();
-    });
-  });
+                        {/* Section 4: Digital Client Signature (mandatory) */}
+                        <div>
+                            <h2 className="text-lg font-semibold border-l-4 border-gold pl-3">Client Digital Signature *</h2>
+                            <canvas ref={clientSignature.canvasRef} className="signature-canvas" onMouseDown={clientSignature.startDrawing} onMouseMove={clientSignature.draw} onMouseUp={clientSignature.endDrawing} onTouchStart={clientSignature.startDrawing} onTouchMove={clientSignature.draw} onTouchEnd={clientSignature.endDrawing}></canvas>
+                            <button onClick={clientSignature.clearSignature} className="text-xs text-red-500 mt-1">Clear Signature</button>
+                        </div>
 
-  // Dark Mode toggle
-  const darkToggle = document.getElementById('darkModeToggle');
-  darkToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-  });
+                        {/* Section 5: Agent Signature */}
+                        <div>
+                            <h2 className="text-lg font-semibold border-l-4 border-gold pl-3">Agent Signature (Emamdin Wassim)</h2>
+                            <canvas ref={agentSignature.canvasRef} className="signature-canvas" onMouseDown={agentSignature.startDrawing} onMouseMove={agentSignature.draw} onMouseUp={agentSignature.endDrawing} onTouchStart={agentSignature.startDrawing} onTouchMove={agentSignature.draw} onTouchEnd={agentSignature.endDrawing}></canvas>
+                            <button onClick={agentSignature.clearSignature} className="text-xs text-red-500 mt-1">Reset Agent Signature</button>
+                        </div>
 
-  // Utility: Save all data to localStorage
-  function saveAllData() {
-    localStorage.setItem('bookings', JSON.stringify(bookings));
-    localStorage.setItem('rooms', JSON.stringify(rooms));
-    localStorage.setItem('staff', JSON.stringify(staff));
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }
+                        {/* Section 6: Photo Capture (flexible) */}
+                        <div>
+                            <h2 className="text-lg font-semibold border-l-4 border-gold pl-3">Photo Documentation</h2>
+                            <div className="space-y-3">
+                                <label className="block">Client Selfie with Agent (optional)<input type="file" accept="image/*" capture="environment" onChange={(e)=>{if(e.target.files[0]){const r=new FileReader(); r.onloadend=()=>setSelfiePhoto(r.result); r.readAsDataURL(e.target.files[0])}}} className="block w-full text-sm"/></label>
+                                {selfiePhoto && <img src={selfiePhoto} className="h-20 rounded border"/>}
+                                <label className="block">National ID Upload (optional)<input type="file" accept="image/*" capture="user" onChange={(e)=>{if(e.target.files[0]){const r=new FileReader(); r.onloadend=()=>setIdPhoto(r.result); r.readAsDataURL(e.target.files[0])}}} className="block w-full text-sm"/></label>
+                                {idPhoto && <img src={idPhoto} className="h-20 rounded border"/>}
+                            </div>
+                        </div>
 
-  // ------- Bookings Management --------
-  const bookingForm = document.getElementById('bookingForm');
-  const bookingsTableBody = document.querySelector('#bookingsTable tbody');
-  const roomSelect = document.getElementById('roomSelect');
+                        {/* Section 7: GPS Location Verification */}
+                        <div className="bg-gray-100 p-3 rounded-xl text-xs flex items-center gap-2">
+                            <span className="font-bold">📍 Location:</span> {geoStatus} {gpsData.lat && `(${gpsData.lat.toFixed(4)}, ${gpsData.lng.toFixed(4)})`}
+                        </div>
 
-  function updateRoomSelect() {
-    roomSelect.innerHTML = '';
-    rooms.forEach(room => {
-      if(room.status === 'available') {
-        const opt = document.createElement('option');
-        opt.value = room.roomNumber;
-        opt.textContent = `${room.roomNumber} (${room.roomType})`;
-        roomSelect.appendChild(opt);
-      }
-    });
-  }
+                        <button onClick={handleSubmit} className="w-full bg-gradient-to-r from-[#0A1A2F] to-[#1E3A5F] text-white py-4 rounded-xl text-lg font-bold shadow-lg transition hover:shadow-xl">
+                            Submit Acknowledgement & Send WhatsApp
+                        </button>
+                    </div>
 
-  bookingForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newBooking = {
-      id: Date.now(),
-      guestName: bookingForm.guestName.value.trim(),
-      guestEmail: bookingForm.guestEmail.value.trim(),
-      guestPhone: bookingForm.guestPhone.value.trim(),
-      roomNumber: bookingForm.roomSelect.value,
-      checkInDate: bookingForm.checkInDate.value,
-      checkOutDate: bookingForm.checkOutDate.value,
-      status: 'confirmed'
-    };
+                    {/* Admin Dashboard Modal */}
+                    {adminOpen && (
+                        <div className="fixed inset-0 bg-black/60 z-50 flex items-start justify-center p-4 overflow-y-auto">
+                            <div className="bg-white rounded-2xl max-w-2xl w-full mt-8 p-5 max-h-[85vh] overflow-auto">
+                                <div className="flex justify-between items-center"><h2 className="text-xl font-bold">Admin Dashboard</h2><button onClick={()=>setAdminOpen(false)} className="text-2xl">×</button></div>
+                                <input placeholder="Search by client name" className="border p-2 w-full my-2 rounded" value={searchTerm} onChange={e=>setSearchTerm(e.target.value)}/>
+                                <input placeholder="Search by property ref" className="border p-2 w-full mb-3 rounded" value={searchRef} onChange={e=>setSearchRef(e.target.value)}/>
+                                <div className="space-y-3">
+                                    {filteredSubmissions.length===0 && <p className="text-gray-500 text-center">No records</p>}
+                                    {filteredSubmissions.map(sub => (
+                                        <div key={sub.id} className="border-b p-3 rounded bg-gray-50 flex justify-between items-center">
+                                            <div><p className="font-semibold">{sub.fullName || "Anonymous"}</p><p className="text-xs">Ref: {sub.propertyRef || "—"} | {sub.visitDate}</p></div>
+                                            <button onClick={()=>generatePDF(sub)} className="text-gold text-sm underline">Download PDF</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
 
-    bookings.push(newBooking);
-    // Mark room as occupied
-    const room = rooms.find(r => r.roomNumber === newBooking.roomNumber);
-    if(room) room.status = 'occupied';
-
-    saveAllData();
-    renderBookings();
-    renderRooms();
-    updateRoomSelect();
-    bookingForm.reset();
-    updateDashboard();
-  });
-
-  function renderBookings() {
-    bookingsTableBody.innerHTML = '';
-    bookings.forEach(b => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${b.guestName}</td>
-        <td>${b.roomNumber}</td>
-        <td>${b.checkInDate}</td>
-        <td>${b.checkOutDate}</td>
-        <td><span class="status status-confirmed">${b.status}</span></td>
-        <td>
-          <button onclick="cancelBooking(${b.id})" title="Cancel Booking">Cancel</button>
-        </td>
-      `;
-      bookingsTableBody.appendChild(tr);
-    });
-  }
-
-  function cancelBooking(id) {
-    const idx = bookings.findIndex(b => b.id === id);
-    if(idx !== -1) {
-      // Mark room available again
-      const room = rooms.find(r => r.roomNumber === bookings[idx].roomNumber);
-      if(room) room.status = 'available';
-
-      bookings.splice(idx,1);
-      saveAllData();
-      renderBookings();
-      renderRooms();
-      updateRoomSelect();
-      updateDashboard();
-    }
-  }
-
-  // -------- Rooms Management --------
-  const roomForm = document.getElementById('roomForm');
-  const roomsTableBody = document.querySelector('#roomsTable tbody');
-
-  roomForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const newRoom = {
-      id: Date.now(),
-      roomNumber: roomForm.roomNumber.value.trim(),
-      roomType: roomForm.roomType.value,
-      status: roomForm.roomStatus.value
-    };
-    // Prevent duplicates
-    if(rooms.some(r => r.roomNumber === newRoom.roomNumber)) {
-      alert('Room number already exists!');
-      return;
-    }
-    rooms.push(newRoom);
-    saveAllData();
-    renderRooms();
-    updateRoomSelect();
-    roomForm.reset();
-    updateDashboard();
-  });
-
-  function renderRooms() {
-    roomsTableBody.innerHTML = '';
-    rooms.forEach(r => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r.roomNumber}</td>
-        <td>${r.roomType}</td>
-        <td><span class="status status-${r.status}">${r.status}</span></td>
-        <td>
-          <button onclick="deleteRoom(${r.id})" title="Delete Room">Delete</button>
-        </td>
-      `;
-      roomsTableBody.appendChild(tr);
-    });
-  }
-
-  function deleteRoom(id) {
-    const idx = rooms.findIndex(r => r.id === id);
-    if(idx !== -1) {
-      // Check if room is booked - prevent deletion if booked
-      const booked = bookings.some(b => b.roomNumber === rooms[idx].roomNumber);
-      if(booked) {
-        alert('Cannot delete room that has active bookings!');
-        return;
-      }
-      rooms.splice(idx,1);
-      saveAllData();
-      renderRooms();
-      updateRoomSelect();
-      updateDashboard();
-    }
-  }
-
-  // ------- Staff Management --------
-  const staffForm = document.getElementById('staffForm');
-  const staffTableBody = document.querySelector('#staffTable tbody');
-
-  staffForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const newStaff = {
-      id: Date.now(),
-      name: staffForm.staffName.value.trim(),
-      role: staffForm.staffRole.value.trim(),
-      status: staffForm.staffStatus.value
-    };
-    staff.push(newStaff);
-    saveAllData();
-    renderStaff();
-    updateTaskAssignedToSelect();
-    staffForm.reset();
-    updateDashboard();
-  });
-
-  function renderStaff() {
-    staffTableBody.innerHTML = '';
-    staff.forEach(s => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${s.name}</td>
-        <td>${s.role}</td>
-        <td><span class="status status-${s.status.replace(/\s/g,'-')}">${s.status}</span></td>
-        <td>
-          <button onclick="deleteStaff(${s.id})" title="Delete Staff">Delete</button>
-        </td>
-      `;
-      staffTableBody.appendChild(tr);
-    });
-  }
-
-  function deleteStaff(id) {
-    const idx = staff.findIndex(s => s.id === id);
-    if(idx !== -1) {
-      // Prevent deletion if assigned to pending/in-progress tasks
-      const assignedTasks = tasks.some(t => t.assignedTo === staff[idx].name && (t.status === 'pending' || t.status === 'in-progress'));
-      if(assignedTasks) {
-        alert('Cannot delete staff assigned to active tasks!');
-        return;
-      }
-      staff.splice(idx,1);
-      saveAllData();
-      renderStaff();
-      updateTaskAssignedToSelect();
-      updateDashboard();
-    }
-  }
-
-  // ------ Task Management ---------
-  const taskForm = document.getElementById('taskForm');
-  const taskList = document.getElementById('taskList');
-  const taskAssignedToSelect = document.getElementById('taskAssignedTo');
-
-  function updateTaskAssignedToSelect() {
-    taskAssignedToSelect.innerHTML = '';
-    staff.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.name;
-      opt.textContent = s.name;
-      taskAssignedToSelect.appendChild(opt);
-    });
-  }
-
-  taskForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const newTask = {
-      id: Date.now(),
-      title: taskForm.taskTitle.value.trim(),
-      assignedTo: taskForm.taskAssignedTo.value,
-      dueDate: taskForm.taskDueDate.value,
-      status: taskForm.taskStatus.value
-    };
-    tasks.push(newTask);
-    saveAllData();
-    renderTasks();
-    taskForm.reset();
-    updateDashboard();
-  });
-
-  function renderTasks() {
-    taskList.innerHTML = '';
-    tasks.forEach(t => {
-      const div = document.createElement('div');
-      div.className = 'task-item';
-      div.innerHTML = `
-        <strong>${t.title}</strong> - Assigned to: ${t.assignedTo} - Due: ${t.dueDate} - Status: <span class="status status-${t.status.replace(/\s/g,'-')}">${t.status}</span>
-        <button onclick="deleteTask(${t.id})" title="Delete Task">Delete</button>
-      `;
-      taskList.appendChild(div);
-    });
-  }
-
-  function deleteTask(id) {
-    const idx = tasks.findIndex(t => t.id === id);
-    if(idx !== -1) {
-      tasks.splice(idx,1);
-      saveAllData();
-      renderTasks();
-      updateDashboard();
-    }
-  }
-
-  // -------- Dashboard Update --------
-  const dashboardStats = document.getElementById('dashboardStats');
-
-  function updateDashboard() {
-    const totalRooms = rooms.length;
-    const availableRooms = rooms.filter(r => r.status === 'available').length;
-    const occupiedRooms = rooms.filter(r => r.status === 'occupied').length;
-    const totalBookings = bookings.length;
-    const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
-    const totalStaff = staff.length;
-    const activeStaff = staff.filter(s => s.status === 'active').length;
-    const pendingTasks = tasks.filter(t => t.status === 'pending').length;
-    const inProgressTasks = tasks.filter(t => t.status === 'in-progress').length;
-    const completedTasks = tasks.filter(t => t.status === 'completed').length;
-
-    dashboardStats.innerHTML = `
-      <div>Total Rooms: ${totalRooms}</div>
-      <div>Available Rooms: ${availableRooms}</div>
-      <div>Occupied Rooms: ${occupiedRooms}</div>
-      <div>Total Bookings: ${totalBookings}</div>
-      <div>Confirmed Bookings: ${confirmedBookings}</div>
-      <div>Total Staff: ${totalStaff}</div>
-      <div>Active Staff: ${activeStaff}</div>
-      <div>Pending Tasks: ${pendingTasks}</div>
-      <div>In Progress Tasks: ${inProgressTasks}</div>
-      <div>Completed Tasks: ${completedTasks}</div>
-    `;
-  }
-
-  // Initial render calls
-  renderRooms();
-  renderBookings();
-  renderStaff();
-  renderTasks();
-  updateRoomSelect();
-  updateTaskAssignedToSelect();
-  updateDashboard();
-</script>
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        setTimeout(() => { if(window.lucide) lucide.createIcons(); }, 150);
+    </script>
+</body>
+</html>
